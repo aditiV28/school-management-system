@@ -23,7 +23,7 @@ Installation
 3. Set up environment variables
 4. Start the server
 
-For API endpoints, error handling and input-output expected formats please refer to the openapi.yml file under /utils. Copy-paste the openapi.yml file into a swagger editor (https://editor.swagger.io/) to get a better understanding.
+For API endpoints and documentation, error handling and input-output expected formats please refer to the openapi.yml file under /utils. Copy-paste the openapi.yml file into a swagger editor (https://editor.swagger.io/) to get a better understanding.
 
 Authentication and Authorization
 
