@@ -1,4 +1,4 @@
-school-management-system
+
 This API is designed to facilitate the management of schools, classrooms and students. It allows users to perform basic CRUD operations on the mentioned entities. The API also supports authentication and authorization mechanisms to ensure that only authorized users can perform certain operations.
 
 Features
