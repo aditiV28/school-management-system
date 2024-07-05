@@ -50,11 +50,9 @@ exports.getAllStudents = async(req,res) => {
     }
 }
 
-exports.getStudentById = async(req,res) => {console.log('!!!!!!!!')
+exports.getStudentById = async(req,res) => {
     try{    
         const student = await Student.findById(req.params.id);
-        console.log('---', req.params.id)
-        console.log('====', student)
         if(!student)
             res.status(400).json({message: 'Student not found! Try again.'})
         res.status(200).json(student);
