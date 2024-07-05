@@ -1,0 +1,1422 @@
+openapi: 3.0.0
+info:
+  title: School Management API
+  description: API for managing schools, classrooms, and students.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+    description: Local server
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+        username:
+          type: string
+        role:
+          type: string
+        password:
+          type: string
+
+    School:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        address:
+          type: string
+        admin:
+          type: string
+          description: ObjectId of the User who is the admin
+
+    Classroom:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        school:
+          type: string
+          description: ObjectId of the School
+
+    Student:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        age:
+          type: string
+        classroom:
+          type: string
+          description: ObjectId of the Classroom
+
+security:
+  - bearerAuth: []
+
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                role:
+                  type: string
+                  enum: [Superadmin, SchoolAdmin]
+      responses:
+        '200':
+          description: User registered successfully!
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '403':
+          description: Forbidden. User does not have permission to make this request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '502':
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '503':
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+
+  /auth/login:
+    post:
+      summary: Login a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '401':
+          description: Invalid credentials! Try again.
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '403':
+          description: Forbidden. User does not have permission to make this request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '502':
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '503':
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+
+
+  /schools/:
+    post:
+      summary: Create a new school
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  type: string
+                address:
+                  type: string
+                admin:
+                  type: string
+      responses:
+        '200':
+          description: School created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/School'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '403':
+          description: Forbidden. User does not have permission to make this request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '502':
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '503':
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+
+        
+
+    get:
+      summary: Get all schools
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of schools
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/School'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '403':
+          description: Forbidden. User does not have permission to make this request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '502':
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '503':
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+
+
+  /schools/{schoolId}:
+    get:
+      summary: Get a school by ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: schoolId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: School details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/School'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '403':
+          description: Forbidden. User does not have permission to make this request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '404':
+          description: School not found
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '502':
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '503':
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+
+
+    put:
+      summary: Update a school
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: schoolId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  type: string
+                address:
+                  type: string
+                admin: 
+                  type: string
+      responses:
+        '200':
+          description: School updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/School'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '403':
+          description: Forbidden. User does not have permission to make this request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '404':
+          description: School not found!
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '502':
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '503':
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+
+
+    delete:
+      summary: Delete a school
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: schoolId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: School deleted successfully!
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '403':
+          description: Forbidden. User does not have permission to make this request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '404':
+          description: School not found
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '502':
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '503':
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+
+  /classrooms/{schoolId}/classrooms:
+    post:
+      summary: Create a new classroom in a school
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: schoolId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  type: string
+      responses:
+        '201':
+          description: Classroom created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Classroom'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '403':
+          description: Forbidden. User does not have permission to make this request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '502':
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '503':
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+
+
+    get:
+      summary: Get all classrooms in a school
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: schoolId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of classrooms
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Classroom'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '403':
+          description: Forbidden. User does not have permission to make this request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '502':
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '503':
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+
+
+  /classrooms/{classroomId}:
+    get:
+      summary: Get a classroom by ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: classroomId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Classroom details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Classroom'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '403':
+          description: Forbidden. User does not have permission to make this request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '502':
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '503':
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+
+    put:
+      summary: Update a classroom
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: classroomId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  type: string
+      responses:
+        '200':
+          description: Classroom updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Classroom'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '403':
+          description: Forbidden. User does not have permission to make this request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '502':
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '503':
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+
+
+    delete:
+      summary: Delete a classroom
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: classroomId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Classroom deleted
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '403':
+          description: Forbidden. User does not have permission to make this request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '502':
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '503':
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+
+
+  /students/{classroomId}/students:
+    post:
+      summary: Create a new student in a classroom
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: classroomId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  type: string
+                age: 
+                  type: string
+      responses:
+        '200':
+          description: Student created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '403':
+          description: Forbidden. User does not have permission to make this request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '502':
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '503':
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+
+
+    get:
+      summary: Get all students in a classroom
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: classroomId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of students
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Student'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '403':
+          description: Forbidden. User does not have permission to make this request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '502':
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '503':
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+                    
+  /students/{studentId}:
+    get:
+      summary: Get a student by ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: studentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Student details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '403':
+          description: Forbidden. User does not have permission to make this request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '502':
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '503':
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+
+    put:
+      summary: Update a student
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: studentId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  type: string
+                age:
+                  type: string
+      responses:
+        '200':
+          description: Student updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '403':
+          description: Forbidden. User does not have permission to make this request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '502':
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '503':
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+
+
+    delete:
+      summary: Delete a student
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: studentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Student deleted
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '403':
+          description: Forbidden. User does not have permission to make this request
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '502':
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+        '503':
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                properties: 
+                  message:
+                    type: string
+
+
+
