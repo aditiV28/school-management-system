@@ -21,6 +21,7 @@ Installation
 1. Clone the repository
 2. Run the command docker compose --build
 3. Application started
+4. You can use Postman to test the APIs using http://localhost:3000/<endpoint_here>
 
 For API endpoints and documentation, error handling and input-output expected formats please refer to the openapi.yml file under /utils. Copy-paste the openapi.yml file into a swagger editor (https://editor.swagger.io/) to get a better understanding.
 
