@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  api:
+    build: .
+    image: api
+    working_dir: /app
+    expose:
+      - 4000
+    ports:
+      - '4000:4000'
+    env_file:
+      - ./.env
+    environment:
+      - JWT_SECRET = 'f6bf8eff1c346bc9e4a4646d3741ec980f6b2d810c17638e126bdf2dcdbcfd3a'
+      - MONGO_URI = 'mongodb://localhost:27017/'
+    depends_on:
+      - mongo
+
+  mongo:
+    container_name: mongo
+    image: mongo
+    volumes:
+      - './data:/data/db'
+    ports:
+      - 27017:27017
+    restart: always
