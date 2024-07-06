@@ -19,9 +19,8 @@ Prerequisites
 
 Installation
 1. Clone the repository
-2. install dependencies
-3. Set up environment variables
-4. Start the server
+2. Run the command docker compose --build
+3. Application started
 
 For API endpoints and documentation, error handling and input-output expected formats please refer to the openapi.yml file under /utils. Copy-paste the openapi.yml file into a swagger editor (https://editor.swagger.io/) to get a better understanding.
 
